@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Lovci velkých písmen</title>
+<style>
+:root{--bg:#140807;--gold:#ffd36a;--text:#fff7df;--muted:#e8cfaa;--ok:#78f0a0;--bad:#ff6262}
+*{box-sizing:border-box}html,body{min-height:100%;margin:0}body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:radial-gradient(circle at top,#542014 0,#160806 48%,#050101 100%);color:var(--text)}
+body.mode-challenge{background:radial-gradient(circle at top,#233f16 0,#160806 52%,#030101 100%)}body.mode-test{background:radial-gradient(circle at top,#5a1717 0,#160806 52%,#030101 100%)}
+.wrap{max-width:980px;margin:auto;padding:14px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}.card{background:linear-gradient(180deg,rgba(61,27,18,.97),rgba(28,10,7,.97));border:1px solid rgba(255,211,106,.36);border-radius:22px;box-shadow:0 14px 36px #0008;padding:18px}
+.title{text-align:center;font-size:clamp(30px,6vw,62px);font-weight:1000;color:var(--gold);text-shadow:0 2px 0 #5d260a,0 0 24px #ffb02e55;margin:10px 0}.subtitle{text-align:center;color:var(--muted);font-size:clamp(15px,2.4vw,20px)}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;align-items:center;margin-top:14px}.btn{border:0;border-radius:999px;padding:14px 24px;font-weight:1000;font-size:18px;cursor:pointer;box-shadow:0 8px 0 #612507;color:#251006;background:var(--gold)}.challengeBtn{background:linear-gradient(#d0ff9e,#4d9a26);box-shadow:0 8px 0 #1d4a10}.testBtn{background:linear-gradient(#ffb1a9,#c82e2e);box-shadow:0 8px 0 #661111;color:white}.ghost{background:#ffffff12;color:var(--gold);border:1px solid #ffd36a55;box-shadow:none}
+.input{width:100%;border:2px solid #ffd36a66;border-radius:16px;padding:15px;font-size:22px;background:#fff8e8;color:#1a0804;font-weight:900}.nameBox{max-width:520px;margin:auto;display:flex;flex-direction:column;gap:10px}
+.topbar{display:grid;grid-template-columns:100px 1fr 100px;align-items:start;gap:10px}.seal{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:1000;border:3px solid #ffce55;box-shadow:inset 0 -18px 28px #0004,0 7px 18px #0008}.challengeSeal{background:linear-gradient(#d0ff9e,#4d9a26);color:#082000}.testSeal{background:linear-gradient(#ffb1a9,#d83333);color:white}.sectionSeal{background:linear-gradient(#e4a13a,#8c4c12);color:white;font-size:13px;padding:8px}.timeCenter{text-align:center;font-size:clamp(46px,7vw,78px);font-weight:1000;line-height:.95}.status{display:block;margin:8px auto 0;padding:7px 10px;border-radius:999px;border:1px solid #ffd36aaa;background:#0005;font-size:clamp(16px,3vw,25px);color:#7cff26}
+.prompt{text-align:center;color:#ffb0c2;font-size:clamp(20px,3vw,32px);font-weight:1000;margin:12px}.question{border:2px solid #ffbe23dd;border-radius:18px;padding:22px 18px;background:#0004;font-size:clamp(23px,3.7vw,39px);font-weight:1000;text-align:center;line-height:1.45}.blank{display:inline-block;min-width:100px;border-bottom:4px solid var(--gold);color:var(--gold);padding:0 8px}
+.choiceGrid{display:grid;grid-template-columns:repeat(2,minmax(120px,1fr));gap:18px;margin:22px auto 8px;max-width:640px}.choiceBtn{border:3px solid #ffd36a88;border-radius:18px;padding:16px;background:linear-gradient(#fff8e8,#f5dba7);color:#1a0804;font-size:clamp(22px,3.5vw,34px);font-weight:1000;text-align:center;cursor:pointer;box-shadow:0 7px 0 #8d4d14;transition:transform .08s,filter .08s,border-color .08s}.choiceBtn:hover{filter:brightness(1.08)}.choiceBtn:active{transform:translateY(4px);box-shadow:0 3px 0 #8d4d14}.choiceBtn:disabled{cursor:default;opacity:.72}.choiceBtn.correct{border-color:var(--ok);background:#dfffea;box-shadow:0 7px 0 #187d45;opacity:1}.choiceBtn.wrong{border-color:var(--bad);background:#ffe1e1;box-shadow:0 7px 0 #8f2020;opacity:1}
+.feedback{text-align:center;font-size:clamp(20px,4vw,32px);font-weight:1000;min-height:58px;margin:10px}.ok{color:var(--ok)}.bad{color:var(--bad)}.result{text-align:center;font-size:22px;line-height:1.55}.small{font-size:14px;color:var(--muted);text-align:center}.resultTable{margin:12px auto;border-collapse:collapse;font-size:16px}.resultTable td,.resultTable th{padding:6px 14px;border:1px solid #ffd36a44}.correctText{color:var(--ok);font-weight:900}
+@media(max-width:700px){.wrap{padding:6px}.card{padding:10px}.topbar{grid-template-columns:68px 1fr 68px;gap:4px}.seal{width:64px;height:64px;font-size:11px}.timeCenter{font-size:42px}.status{font-size:14px;padding:4px}.question{font-size:clamp(21px,6vw,32px);padding:15px 9px}.choiceGrid{gap:10px;margin-top:16px}.choiceBtn{padding:13px}.row .btn{flex:1 1 150px}}
+</style>
+</head>
+<body><div class="wrap" id="app"></div>
+<script id="bank" type="text/plain">
+Pražský|pražský|Před prohlídkou jsme si zapsali|hrad do itineráře.
+Karlově|karlově|Na|mostě panoval čilý ruch.
+Václavském|václavském|Na|náměstí se konala demonstrace.
+Krumlově|krumlově|V Českém|jsme navštívili zámek.
+severní|Severní|Na|Moravě se konala konference.
+oceán|Oceán|Plavba vedla přes Tichý|.
+Krkonoše|krkonoše|V zimě jsme projeli|.
+Černém|černém|Loď zakotvila v|moři.
+Sahary|sahary|Výprava se vrátila ze|.
+Evropská|evropská|Rozhodnutí schválila|unie.
+České|české|Zástupci|republiky vystoupili na summitu.
+Spojených|spojených|Přednášel na univerzitě ve|státech.
+Ministerstvo|ministerstvo|Žádost odešleme na|školství.
+Národní|národní|Program připravilo|divadlo.
+Masarykově|masarykově|Studovala na|univerzitě v Brně.
+Evropský|evropský|Voleb se účastnil|parlament.
+Ústava|ústava|Základním právním dokumentem je|České republiky.
+Bible|bible|V hodině jsme četli úryvek z|.
+Korán|korán|V muzeu vystavili starý|.
+Vánocích|vánocích|O|navštívila rodina prarodiče.
+nový|Nový|Každý|rok přináší nové příležitosti.
+Den|den|V květnu se slaví|matek.
+Velký|velký|Na|pátek neprobíhá vyučování.
+Štědrý|štědrý|Na|den se schází celá rodina.
+Velikonočním|velikonočním|Po|pondělí se žáci vracejí do školy.
+pražské|Pražské|Ranní|metro bylo nezvykle prázdné.
+lednu|Lednu|V|bývá v horách mráz.
+češtině|Češtině|V|se učíme rozlišovat vlastní jména.
+anglicky|Anglicky|Na návštěvníky promluvil|.
+českém|Českém|O|jazyce diskutovali studenti.
+prezident|Prezident|Nový|republiky přijal delegaci.
+ministr|Ministr|Na konferenci vystoupil|zdravotnictví.
+Slunce|slunce|Země obíhá kolem|.
+Měsíce|měsíce|Povrch|zkoumají také automatické sondy.
+Mléčnou|mléčnou|Na snímku jsme poznali|dráhu.
+Orion|orion|Na zimní obloze jsme snadno našli souhvězdí|.
+gymnáziu|Gymnáziu|Po maturitě na|chce studovat medicínu.
+ulici|Ulici|Bydlí v|Na Příkopě.
+sněmovna|Sněmovna|Poslanecká|hlasovala o návrhu.
+Ústavního|ústavního|Nález|soudu vyvolal veřejnou diskusi.
+Listiny|listiny|Článek|základních práv a svobod citoval soud.
+Pravidla|pravidla|Koupil si|českého pravopisu.
+první|První|Román se odehrává během|světové války.
+města|Města|Na exkurzi jsme dorazili do|Tábor.
+národního|Národního|V semináři jsme četli texty z období|obrození.
+Vysokými|vysokými|V létě jsme putovali|Tatrami.
+Jižní|jižní|Expedice zamířila do|Ameriky.
+jižních|Jižních|Dovolenou trávíme v|Čechách.
+východních|Východních|Ve|Čechách se dochovala řada památek.
+Terase|terase|Bydlí na Severní|v Ústí nad Labem.
+Výsluní|výsluní|Novou ulici pojmenovali Na|.
+hory|Hory|Výstup na Krušné|nás unavil.
+mys|Mys|Lodě obepluly|Dobré naděje.
+Miss|miss|Soutěž|Universe sledují diváci po celém světě.
+Lodgy|lodgy|Automobil Dacia|má velký zavazadlový prostor.
+Brodě|brodě|Festival se koná v Havlíčkově|.
+Vsi|vsi|Výlet jsme zakončili ve Spišské Nové|.
+Habsburkové|habsburkové|V českých zemích vládli|po několik století.
+Přemyslovcích|přemyslovcích|O|jsme se učili v dějepise.
+husitů|Husitů|V muzeu vystavili zbraně|.
+májovcích|Májovcích|Seminář pojednával o|.
+ruchovci|Ruchovci|Mezi české básnické skupiny patřili|.
+Suezským|suezským|Nákladní loď proplula|průplavem.
+Divoké|divoké|V okolí|Šárky vedou turistické stezky.
+Bílé|bílé|Řeka|Desné se po dešti rozvodnila.
+kroměřížské|Kroměřížské|Staré|ulice jsou lemovány podloubím.
+shakespearovský|Shakespearovský|Autor použil|způsob psaní.
+Nerudovo|nerudovo|V hodině jsme rozebírali|dílo.
+čapkovské|Čapkovské|Její|myšlení připomíná humanismus Karla Čapka.
+rokycanskou|Rokycanskou|Navštívili jsme|školu.
+ústeckém|Ústeckém|Sešli jsme se na|náměstí.
+Svět|svět|Na výletě jsme obešli rybník|.
+Jihočeského|jihočeského|Muzeum připravilo výstavu pro obyvatele|kraje.
+západní|Západní|Na|polokouli leží řada velkých států.
+horního|Horního|Výlet vedl podél|Labe.
+ledovému|Ledovému|Výprava zamířila k Severnímu|oceánu.
+italských|Italských|Léto strávili v|Alpách.
+horu|Horu|Cesta vedla přes Černou|.
+strany|Strany|Představitelé Občanské demokratické|jednali s novináři.
+Městský|městský|Případ projednal|soud v Praze.
+Svobody|svobody|Památník stojí na náměstí|.
+bílého|Bílého|Získala Řád|lva.
+republiky|Republiky|Historici se stále přou o některé události první|.
+obrození|Obrození|V semináři jsme četli texty z období národního|.
+Pobřeží|pobřeží|Hlavním městem|slonoviny je Yamoussoukro.
+východě|Východě|Cestovali po Dálném|.
+Lužičtí|lužičtí|Mezi západoslovanské národy patří|Srbové.
+Západoevropanů|západoevropanů|Na konferenci vystoupili také zástupci|.
+lidovců|Lidovců|Ve volbách získala strana podporu mnoha|.
+technickém|Technickém|Přednáška se koná na|lyceu.
+kraje|Kraje|Hejtman|schválil nový rozpočet.
+Letné|letné|Po zápase jsme se prošli po|.
+Pankráci|pankráci|Exkurzi jsme zakončili ve věznici na|.
+Mlýně|mlýně|Návštěvu jsme zakončili ve Špindlerově|.
+Trocnově|trocnově|O životě Jana Žižky vypráví expozice v|.
+hejtman|Hejtman|Krajský|zahájil slavnostní setkání.
+Dyje|dyje|Řeka|se vlévá do Moravy.
+Berounky|berounky|Na jaře se často zvedá hladina|.
+Ohře|ohře|Městem protéká řeka|.
+Ještědu|ještědu|Večer jsme pozorovali vysílač na|.
+Hradce|hradce|Při cestě do Jindřichova|jsme se zastavili u rybníka Vajgar.
+Horách|horách|Ve Zlatých|.
+Králové|králové|V Hradci|začala konference.
+Jičíně|jičíně|V Novém|se konal jarmark.
+Meziříčí|meziříčí|Výlet jsme zakončili ve Velkém|.
+Kostelci|kostelci|V Červeném|otevřeli novou galerii.
+Domažlic|domažlic|K výletu jsme si vybrali okolí|.
+Podyjí|podyjí|Výletníci zamířili do národního parku|.
+Slezska|slezska|Výstava představuje lidovou architekturu|.
+Moravané|moravané|Na slavnost přijeli také|.
+Jihlavané|jihlavané|Na náměstí se sešli|.
+Ostravané|ostravané|Na festival dorazili také|.
+Plzeňané|plzeňané|Na koncert přišli|.
+sparťan|Sparťan|Dlouholetý|nevynechá domácí zápas.
+Lucemburkové|lucemburkové|Ve středověku vládli v českých zemích také|.
+Jagellonci|jagellonci|Po Lucemburcích nastoupili na český trůn|.
+Máchovo|máchovo|V hodině jsme rozebírali|pojetí romantického hrdiny.
+dantovské|Dantovské|Obraz má téměř|pekelně temné rysy.
+platonovským|Platonovským|Film pracuje s|motivem jeskyně.
+sisyfovskou|Sisyfovskou|Jeho cesta připomínala|práci.
+donchuán|Donchuán|V románu se z něj stal nenapravitelný|.
+harpagon|Harpagon|Bývalý ředitel byl pověstný jako|a každou korunu pečlivě hlídal.
+romeo|Romeo|Místní|měl obdivovatelek víc než dost.
+mecenáši|Mecenáši|Díky místnímu|získala galerie vzácnou sbírku.
+baroko|Baroko|V semináři jsme porovnávali|a klasicismus.
+renesance|Renesance|V evropském umění se prosadila|.
+romantismus|Romantismus|Cit a individualita hrály zásadní roli v období|.
+osvícenství|Osvícenství|Důraz na rozum a vzdělání je typický pro období|.
+donkichotský|Donkichotský|Jeho plán působil jako|pokus změnit svět.
+Svátek|svátek|Na|práce zůstala většina obchodů zavřená.
+Tří|tří|O svátku|králů se v obci koná průvod.
+čtvrtek|Čtvrtek|Na Zelený|se v kostelech nekonají mše.
+neděle|Neděle|Během Květné|se v kostele žehnají ratolesti.
+Památce|památce|O|zesnulých lidé navštěvují hřbitovy.
+vítězství|Vítězství|Den|připomíná konec války v Evropě.
+Senátu|senátu|Návrh se dostal až do|Parlamentu České republiky.
+knihovně|Knihovně|Výstava se koná v Národní|České republiky.
+Česká|česká|Kurz zveřejnila|národní banka.
+věd|Věd|Grant schválila Akademie|České republiky.
+lumírovcům|Lumírovcům|K|se řadili například Jaroslav Vrchlický a Julius Zeyer.
+třicetileté|Třicetileté|Přednáška se věnovala|válce.
+Obnovené|obnovené|Po bitvě na Bílé hoře začalo platit|zřízení zemské.
+Zlatá|zlatá|K významným listinám patří|bula sicilská.
+Billa|billa|V prodejně|koupili čerstvé pečivo.
+Dušičky|dušičky|Na|navštěvují lidé hřbitovy.
+Hromnice|hromnice|Na|se podle pranostiky láme zima.
+Letnicích|letnicích|O|si křesťané připomínají seslání Ducha svatého.
+dušičkový|Dušičkový|Na podzim nastává|čas.
+kolínském|Kolínském|Prošli jsme se po|náměstí v Kolíně.
+nad|Nad|V Brandýse|Labem se konal festival.
+Židé|židé|Při sčítání lidu se k židovské národnosti přihlásili|.
+židovskou|Židovskou|Dílo zachycuje|kulturu.
+indiáni|Indiáni|Původní|obývali americký kontinent dávno před příchodem Evropanů.
+indiánského|Indiánského|Muzeum vystavilo předměty|umění.
+černoši|Černoši|Ve starších pramenech se objevuje označení|.
+Eskymácích|eskymácích|V učebnici jsme četli o|.
+Apačové|apačové|V oblasti původně žili|.
+Inkové|inkové|V Peru kdysi vládli|.
+Polabím|polabím|Řeka Labe protéká|.
+Děčínsko|děčínsko|Turisté prozkoumali|.
+Rukopis|rukopis|V muzeu vystavují|královédvorský.
+Rakušané|rakušané|Na výměnný pobyt přijeli|.
+rakouská|Rakouská|Vystavovali také|díla.
+Asiaté|asiaté|Na konferenci debatovali také|.
+asijská|Asijská|Tato|restaurace nabízí několik vegetariánských jídel.
+průplav|Průplav|Panamský|spojuje Atlantský a Tichý oceán.
+ráji|Ráji|V Českém|jsme strávili týden.
+</script>
+<script>
+"use strict";
+const SHEET_ID="1pkj1ISkzdtgNphGLGwakezT1WzHJxz-pv2OLnCmfnLk";
+const GAS_WEB_APP_URL="https://script.google.com/macros/s/AKfycbzrwi1N_f2ddRf2XsOLBtDEFmcxAdWPpW170_dtGNSXUl8vejZl1dhxkqMYhjdxVs8u/exec";
+const RESULTS_SHEET_URL="https://docs.google.com/spreadsheets/d/1pkj1ISkzdtgNphGLGwakezT1WzHJxz-pv2OLnCmfnLk/edit?usp=sharing";
+const TIME_LIMIT=15,TEST_COUNT=20,CHALLENGE_TARGET=20,app=document.getElementById("app");
+const DATA=document.getElementById("bank").textContent.trim().split("\n").map((line,i)=>{const p=line.split("|");if(p.length!==4)throw Error("Chybný řádek databáze "+(i+1));return{id:i+1,answer:p[0],wrong:p[1],before:p[2],after:p[3]}});
+let state={screen:"home",mode:null,name:"",clazz:"",pool:[],index:0,score:0,correct:0,wrongCount:0,streak:0,timer:null,pending:null,locked:false,restart:false,finishSent:false,seenChallenge:new Set()};
+const CHEAT_NOTICE_KEY="lovciVelkychPismen_cheatNotice";
+function clearCheatNotice(){try{sessionStorage.removeItem(CHEAT_NOTICE_KEY)}catch(e){}}
+function activeProtected(){return ["challenge","test"].includes(state.mode)&&state.screen==="question"&&!state.finishSent}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
+function clearTimer(){clearInterval(state.timer);state.timer=null}function clearPending(){clearTimeout(state.pending);state.pending=null}
+function render(html,mode=state.mode){document.body.className=mode?"mode-"+mode:"";app.innerHTML=html;document.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>actions[b.dataset.act]())}
+function home(){if(activeProtected()){cheatFinish("opuštění aplikace");return}if(state.cheated)clearCheatNotice();clearTimer();clearPending();state.screen="home";state.mode=null;render('<div class="card"><h1 class="title">Lovci velkých písmen</h1><p class="subtitle">Vyber správný zápis slova ve větě.<br><strong>'+DATA.length+' úloh • 15 sekund na odpověď</strong></p><div class="row"><button class="btn challengeBtn" data-act="nameChallenge">VÝZVA</button><button class="btn testBtn" data-act="nameTest">TEST</button></div><div class="row"><a class="btn ghost" href="'+RESULTS_SHEET_URL+'" target="_blank" rel="noopener noreferrer" style="text-decoration:none">VÝSLEDKOVÁ TABULKA</a></div><p class="small">TEST: 20 náhodných úloh, každá za 1 bod.<br>VÝZVA: 20 správných odpovědí v řadě = jednička. Chyba nebo vypršení času začíná novou sérii.<br>V každé otázce vyber jednu ze dvou podob slova.</p><table class="resultTable"><tr><th>Body v testu</th><th>Známka</th></tr><tr><td>20–18</td><td>1</td></tr><tr><td>17–16</td><td>2</td></tr><tr><td>15–14</td><td>3</td></tr><tr><td>13–12</td><td>4</td></tr><tr><td>11–0</td><td>5</td></tr></table></div>',null)}
+function nameScreen(mode){clearPending();state.mode=mode;state.screen="name";render('<div class="card"><h1 class="title">'+(mode==="challenge"?"VÝZVA":"TEST")+'</h1><div class="nameBox"><input class="input" id="name" autocomplete="name" placeholder="Jméno žáka" aria-label="Jméno žáka"><input class="input" id="clazz" placeholder="Třída" aria-label="Třída"><button class="btn '+(mode==="challenge"?"challengeBtn":"testBtn")+'" id="start">ZAČÍT</button>'+(mode==="challenge"?'<button class="btn ghost" data-act="home">HLAVNÍ MENU</button>':'')+'</div></div>');document.getElementById("start").onclick=()=>{const n=document.getElementById("name").value.trim(),c=document.getElementById("clazz").value.trim();if(!n||!c){alert("Vyplň jméno i třídu.");return}state.name=n;state.clazz=c;start(mode)}}
+function start(mode){clearCheatNotice();clearTimer();clearPending();state={...state,screen:"question",mode,pool:mode==="test"?shuffle(DATA).slice(0,TEST_COUNT):shuffle(DATA),index:0,score:0,correct:0,wrongCount:0,streak:0,locked:false,restart:false,finishSent:false,cheated:false,cheatSoundPending:false,seenChallenge:new Set()};next()}
+function next(){clearTimer();clearPending();if(state.mode==="test"&&state.index>=TEST_COUNT)return finish();if(state.mode==="challenge"&&state.index>=state.pool.length){state.seenChallenge.clear();state.pool=shuffle(DATA);state.index=0}state.screen="question";state.current=state.pool[state.index];if(state.mode==="challenge")state.seenChallenge.add(state.current.id);state.locked=false;renderQuestion();startTimer()}
+function renderQuestion(){const q=state.current;state.choices=shuffle([{text:q.answer,correct:true},{text:q.wrong,correct:false}]);const line=esc(q.before)+' <span class="blank">_____</span> '+esc(q.after);render('<div class="card"><div class="topbar"><div class="seal '+(state.mode==="challenge"?"challengeSeal":"testSeal")+'">'+(state.mode==="challenge"?"VÝZVA":"TEST")+'</div><div class="timeCenter"><span id="time">'+TIME_LIMIT+'</span><span class="status">ÚLOHA '+(state.index+1)+(state.mode==="test"?"/"+TEST_COUNT+" • BODY "+state.score:" • SÉRIE "+state.streak+"/"+CHALLENGE_TARGET)+'</span></div><div class="seal sectionSeal">VELKÁ<br>PÍSMENA</div></div><div class="prompt">Vyber správný zápis slova.</div><div class="question">'+line+'</div><div class="choiceGrid">'+state.choices.map((x,i)=>'<button class="choiceBtn" data-choice="'+i+'">'+esc(x.text)+'</button>').join("")+'</div><div class="feedback" id="fb" aria-live="polite"></div><div class="row" id="nextRow"></div>'+(state.mode==="challenge"?'<div class="small"><a href="#" data-act="home" style="color:var(--muted)">Hlavní menu</a></div>':'')+'</div>');document.querySelectorAll("[data-choice]").forEach(b=>b.onclick=()=>answer(Number(b.dataset.choice),b))}
+function correctSentence(q){return esc(q.before)+' <span class="correctText">'+esc(q.answer)+'</span> '+esc(q.after)}
+function markChoices(selected){document.querySelectorAll("[data-choice]").forEach((b,i)=>{b.disabled=true;if(state.choices[i].correct)b.classList.add("correct");else if(b===selected)b.classList.add("wrong")})}
+function answer(i,button){if(state.locked||state.screen!=="question")return;finishAnswer(state.choices[i].correct,button,false)}
+function timeout(){if(!state.locked&&state.screen==="question")finishAnswer(false,null,true)}
+function finishAnswer(good,button,expired){state.locked=true;clearTimer();markChoices(button);const q=state.current,fb=document.getElementById("fb");if(good){state.correct++;state.score++;state.streak++;fb.innerHTML='<span class="ok">SPRÁVNĚ!'+(state.mode==="test"?" +1 BOD":"")+'</span>';soundCorrect()}else{state.wrongCount++;state.streak=0;state.restart=state.mode==="challenge";fb.innerHTML='<span class="bad">'+(expired?"ČAS VYPRŠEL":"CHYBA")+(state.restart?" — VÝZVA ZAČÍNÁ ZNOVU":"")+'</span><br><span class="small">Správně: '+correctSentence(q)+'</span>';soundWrong()}state.index++;if(state.mode==="challenge"&&good&&state.streak>=CHALLENGE_TARGET){state.pending=setTimeout(finishChallenge,800);return}document.getElementById("nextRow").innerHTML='<button class="btn ghost" data-act="next">'+(state.restart?"NOVÁ VÝZVA":state.mode==="test"&&state.index===TEST_COUNT?"VÝSLEDEK":"DALŠÍ")+'</button>';document.querySelector('[data-act="next"]').onclick=advance;state.pending=setTimeout(advance,good?850:4500)}
+function advance(){if(!state.locked||state.screen!=="question")return;clearPending();if(state.restart){let remaining=DATA.filter(q=>!state.seenChallenge.has(q.id));if(remaining.length<CHALLENGE_TARGET){state.seenChallenge.clear();remaining=DATA}state.pool=shuffle(remaining);state.index=0;state.score=0;state.correct=0;state.wrongCount=0;state.streak=0;state.restart=false}next()}
+function startTimer(){state.deadline=Date.now()+TIME_LIMIT*1000;updateTime();state.timer=setInterval(()=>{updateTime();if(Date.now()>=state.deadline){clearTimer();timeout()}},100)}
+function updateTime(){const e=document.getElementById("time");if(e)e.textContent=Math.max(0,Math.ceil((state.deadline-Date.now())/1000))}
+function grade(s){return s>=18?1:s>=16?2:s>=14?3:s>=12?4:5}
+function finishChallenge(){clearTimer();clearPending();state.screen="finish";render('<div class="card"><h1 class="title">VÝZVA SPLNĚNA</h1><div class="result"><b>'+esc(state.name)+'</b> • '+esc(state.clazz)+'<br><b>20 správných odpovědí za sebou — známka 1</b></div><div class="sendStatus" id="sendStatus"></div><div class="row"><a class="btn ghost" href="'+RESULTS_SHEET_URL+'" target="_blank" rel="noopener noreferrer" style="text-decoration:none">VÝSLEDKOVÁ TABULKA</a><button class="btn" data-act="home">HLAVNÍ MENU</button></div></div>');sendResult(1,"VÝZVA")}
+function finish(){clearTimer();clearPending();state.screen="finish";const z=grade(state.score);render('<div class="card"><h1 class="title">VÝSLEDEK TESTU</h1><div class="result"><b>'+esc(state.name)+'</b> • '+esc(state.clazz)+'<br><b>Body:</b> '+state.score+'/'+TEST_COUNT+'<br><b>Známka:</b> '+z+'</div><div class="sendStatus" id="sendStatus"></div><div class="row"><a class="btn ghost" href="'+RESULTS_SHEET_URL+'" target="_blank" rel="noopener noreferrer" style="text-decoration:none">VÝSLEDKOVÁ TABULKA</a><button class="btn" data-act="home">HLAVNÍ MENU</button></div></div>');sendResult(z,"TEST")}
+function buildPayload(z,kind){return{timestamp:new Date().toISOString(),jmeno:state.name,trida:state.clazz,znamka:z,rezim:state.mode,oddil:"velká písmena",body:state.score,celkem:TEST_COUNT,spravne:state.correct,spatne:state.wrongCount,poznamka:kind,sheetId:SHEET_ID,app:"Lovci velkých písmen"}}
+function renderCheatResult(){render('<div class="card"><h1 class="title">PODVOD</h1><div class="result"><b>Pokus byl ukončen.</b><br>Bylo zjištěno opuštění testovacího okna.<br><br><b>Známka:</b> 6</div><div class="row"><a class="btn ghost" href="'+RESULTS_SHEET_URL+'" target="_blank" rel="noopener noreferrer" style="text-decoration:none">VÝSLEDKOVÁ TABULKA</a><button class="btn" data-act="home">HLAVNÍ MENU</button></div></div>')}
+function cheatFinish(reason){if(!activeProtected())return;state.cheated=true;state.locked=true;state.screen="finish";state.cheatSoundPending=document.visibilityState==="hidden";clearTimer();clearPending();try{sessionStorage.setItem(CHEAT_NOTICE_KEY,JSON.stringify({mode:state.mode,name:state.name,clazz:state.clazz,score:state.score,reason,timestamp:new Date().toISOString()}))}catch(e){}if(!state.cheatSoundPending)soundCheat();sendResult(6,"PODVOD: "+reason,true);renderCheatResult()}
+function restoreCheatNotice(){let notice;try{notice=JSON.parse(sessionStorage.getItem(CHEAT_NOTICE_KEY)||"null")}catch(e){}if(!notice)return false;clearCheatNotice();state={...state,screen:"finish",mode:notice.mode==="challenge"?"challenge":"test",name:notice.name||"",clazz:notice.clazz||"",score:Number(notice.score)||0,cheated:true,finishSent:true,cheatSoundPending:false};renderCheatResult();return true}
+function sendResult(z,kind,urgent=false){if(state.finishSent&&!urgent)return;state.finishSent=true;const payload=buildPayload(z,kind);try{localStorage.setItem("lovciVelkychPismen_lastResult",JSON.stringify(payload))}catch(e){}const params=new URLSearchParams();Object.entries(payload).forEach(([k,v])=>params.append(k,String(v??"")));const body=params.toString();const pending=()=>{try{localStorage.setItem("lovciVelkychPismen_pendingResult",JSON.stringify(payload))}catch(e){}const e=document.getElementById("sendStatus");if(e)e.textContent="Výsledek se nepodařilo odeslat. Poznamenej si body a známku."};try{let beaconQueued=false;if(urgent&&navigator.sendBeacon)beaconQueued=navigator.sendBeacon(GAS_WEB_APP_URL,new Blob([body],{type:"application/x-www-form-urlencoded;charset=UTF-8"}));if(!beaconQueued)fetch(GAS_WEB_APP_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},body,keepalive:true}).then(()=>{const e=document.getElementById("sendStatus");if(e)e.textContent="Výsledek byl odeslán. Zápis ověř ve výsledkové tabulce."}).catch(pending)}catch(e){pending()}}
+let audioContext=null,cheatSoundQueued=false;
+function getAudioContext(){try{const A=window.AudioContext||window.webkitAudioContext;if(!A)return null;if(!audioContext||audioContext.state==="closed")audioContext=new A();return audioContext}catch(e){return null}}
+function scheduleTone(c,freq,dur,gain,delay=0,type="sine"){const start=c.currentTime+Math.max(0,Number(delay)||0),peak=Math.max(.0001,Number(gain)||.08),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,start);g.gain.setValueAtTime(.0001,start);g.gain.exponentialRampToValueAtTime(peak,start+.02);g.gain.exponentialRampToValueAtTime(.0001,start+dur);o.connect(g);g.connect(c.destination);o.start(start);o.stop(start+dur+.02)}
+function tone(freq,dur,gain=.08,delay=0,type="sine"){const c=getAudioContext();if(!c)return;const play=()=>{try{scheduleTone(c,freq,dur,gain,delay,type)}catch(e){}};if(c.state==="running")play();else c.resume().then(()=>{if(c.state==="running")play()}).catch(()=>{})}
+function soundCorrect(){tone(760,.09,.08);tone(980,.11,.06,.08)}
+function soundWrong(){tone(150,.18,.15)}
+function playCheatSound(){tone(1450,1.0,.20,0,"sawtooth");tone(1180,1.0,.17,.48,"sawtooth");tone(1450,1.0,.20,1.0,"sawtooth")}
+function soundCheat(){const c=getAudioContext();if(!c)return;if(c.state==="running"){playCheatSound();return}cheatSoundQueued=true;c.resume().then(()=>{if(cheatSoundQueued&&c.state==="running"){cheatSoundQueued=false;playCheatSound()}}).catch(()=>{})}
+function unlockAudio(){const c=getAudioContext();if(!c||c.state==="running")return;c.resume().then(()=>{if(cheatSoundQueued&&c.state==="running"){cheatSoundQueued=false;playCheatSound()}}).catch(()=>{})}
+document.addEventListener("pointerdown",unlockAudio,{passive:true});document.addEventListener("keydown",unlockAudio);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)cheatFinish("přepnutí mimo stránku");else if(state.cheatSoundPending){state.cheatSoundPending=false;soundCheat()}});
+window.addEventListener("pagehide",()=>cheatFinish("opuštění stránky"));
+window.addEventListener("blur",()=>{setTimeout(()=>{if(activeProtected()&&document.visibilityState==="visible"&&!document.hasFocus())cheatFinish("ztráta aktivního okna")},650)});
+const actions={home:home,nameChallenge:()=>nameScreen("challenge"),nameTest:()=>nameScreen("test"),next:advance};if(!restoreCheatNotice())home();
+</script>
+</body>
+</html>
